@@ -17,9 +17,9 @@ int main()
         if (memcmp(request, "GET / ", 6) == 0) {
             FILE* f = fopen("static/index.html", "r");
 
-            char buffer[512] = {0};
-            fread(buffer, 1, 512, f);
-            send(client, buffer, 512, 0);
+            char buffer[1024] = {0};
+            fread(buffer, 1, 1024, f);
+            send(client, buffer, 1024, 0);
 
             fclose(f);
         }
