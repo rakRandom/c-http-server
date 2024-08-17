@@ -7,21 +7,33 @@ int main()
 {
 	HTTP_Server * server = init_server(8080);
 
-	SOCKET client = accept(server->socket, 0, 0);
+    while (1) {
+        SOCKET client = accept(server->socket, 0, 0);
 
-	char request[512] = {0};
-	recv(client, request, 512, 0);
+        char request[512] = {0};
+        recv(client, request, 512, 0);
 
-	// GET /[file] ...
-	if (memcmp(request, "GET / ", 6) == 0) {
-		FILE* f = fopen("static/index.html", "r");
+        // GET index
+        if (memcmp(request, "GET / ", 6) == 0) {
+            FILE* f = fopen("static/index.html", "r");
 
-		char buffer[512] = {0};
-		fread(buffer, 1, 512, f);
-		send(client, buffer, 512, 0);
+            char buffer[512] = {0};
+            fread(buffer, 1, 512, f);
+            send(client, buffer, 512, 0);
 
-        fclose(f);
-	}
+            fclose(f);
+        }
+
+        // GET (close the server)
+        if (memcmp(request, "GET /close-the-server ", 22) == 0) {
+            send(client, "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n", 43, 0);
+            closesocket(client);
+            break;
+        }
+
+        closesocket(client);
+    }
+	
 
     free(server);
 }
