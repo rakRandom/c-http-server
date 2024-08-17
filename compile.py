@@ -14,7 +14,7 @@ def run():
             if filename.endswith(".c") and dirpath.startswith(".\\src"):
                 files_to_compile.append(f"{dirpath.replace('\\', '/')}/{filename}")
     
-    os.system(f"gcc {' '.join(files_to_compile)} -o {executable_name}")
+    os.system(f"gcc {' '.join(files_to_compile)} -o {executable_name} -lwsock32")
 
 
 if __name__ == "__main__":

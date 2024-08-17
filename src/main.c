@@ -1,14 +1,27 @@
+#include <winsock2.h>
+#include <Windows.h>
 #include <stdio.h>
+#include "http_server.h"
 
-int main(int argc, char * argv[]) {
-    char * name;
+int main()
+{
+	HTTP_Server * server = init_server(8080);
 
-    if (argc == 2)
-        name = argv[1];
-    else
-        name = "world";
+	SOCKET client = accept(server->socket, 0, 0);
 
-    printf("Hello, %s!\n", name);
+	char request[512] = {0};
+	recv(client, request, 512, 0);
 
-    return 0;
+	// GET /[file] ...
+	if (memcmp(request, "GET / ", 6) == 0) {
+		FILE* f = fopen("static/index.html", "r");
+
+		char buffer[512] = {0};
+		fread(buffer, 1, 512, f);
+		send(client, buffer, 512, 0);
+
+        fclose(f);
+	}
+
+    free(server);
 }
